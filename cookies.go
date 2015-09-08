@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/mattetti/goRailsYourself/crypto"
+	"github.com/divoxx/goRailsYourself/crypto"
 )
 
 // CookieEncryptor implements cookie encryption and signing to allow securely storing sensitive
