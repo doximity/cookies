@@ -3,6 +3,7 @@ package cookies
 import (
 	"encoding/json"
 	"net/http"
+	"time"
 
 	"github.com/divoxx/goRailsYourself/crypto"
 )
@@ -90,6 +91,7 @@ type CookieOptions struct {
 	Path     string
 	HTTPOnly bool
 	Secure   bool
+	MaxAge   time.Duration
 }
 
 // Set a cookie with the data set to the encrypted version of the serialization of v.
@@ -107,6 +109,7 @@ func (cm *SecureCookieManager) Set(w http.ResponseWriter, name string, opts *Coo
 		Path:     opts.Path,
 		HttpOnly: opts.HTTPOnly,
 		Secure:   opts.Secure,
+		MaxAge:   int(opts.MaxAge.Seconds()),
 	}
 
 	if err := cm.Encoder.Encode(v, &cookie); err != nil {
