@@ -148,7 +148,7 @@ func (cm *SecureCookieManager) Delete(w http.ResponseWriter, name string, opts *
 
 	cookie := http.Cookie{
 		Name:     name,
-		HttpOnly: true,
+		HttpOnly: opts.HTTPOnly,
 		Domain:   opts.Domain,
 		Secure:   opts.Secure,
 		MaxAge:   -1,
