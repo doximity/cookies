@@ -46,7 +46,7 @@ func (ce *CookieEncryptor) Decrypt(cookie *http.Cookie) error {
 	var value string
 
 	if cookie.Value == "" {
-		return nil
+		return http.ErrNoCookie
 	}
 
 	err := ce.messageEncryptor.DecryptAndVerify(cookie.Value, &value)
