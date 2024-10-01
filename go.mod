@@ -1,6 +1,6 @@
 module github.com/gostack/cookies
 
-go 1.23.1
+go 1.22.6
 
 require github.com/divoxx/goRailsYourself v0.0.0-20150818201947-3fe8d02f099f
 
