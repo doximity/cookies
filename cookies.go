@@ -91,14 +91,13 @@ type SecureCookieManager struct {
 }
 
 type CookieOptions struct {
-	Domain      string
-	Path        string
-	HTTPOnly    bool
-	Secure      bool
-	MaxAge      time.Duration
-	Expires     time.Time
-	Partitioned bool
-	SameSite    http.SameSite
+	Domain   string
+	Path     string
+	HTTPOnly bool
+	Secure   bool
+	MaxAge   time.Duration
+	Expires  time.Time
+	SameSite http.SameSite
 }
 
 // Set a cookie with the data set to the encrypted version of the serialization of v.
@@ -111,15 +110,14 @@ func (cm *SecureCookieManager) Set(w http.ResponseWriter, name string, opts *Coo
 	}
 
 	cookie := http.Cookie{
-		Name:        name,
-		Domain:      opts.Domain,
-		Path:        opts.Path,
-		HttpOnly:    opts.HTTPOnly,
-		Secure:      opts.Secure,
-		MaxAge:      int(opts.MaxAge.Seconds()),
-		Expires:     opts.Expires,
-		Partitioned: opts.Partitioned,
-		SameSite:    opts.SameSite,
+		Name:     name,
+		Domain:   opts.Domain,
+		Path:     opts.Path,
+		HttpOnly: opts.HTTPOnly,
+		Secure:   opts.Secure,
+		MaxAge:   int(opts.MaxAge.Seconds()),
+		Expires:  opts.Expires,
+		SameSite: opts.SameSite,
 	}
 
 	if err := cm.Encoder.Encode(v, &cookie); err != nil {
