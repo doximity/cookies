@@ -1,4 +1,4 @@
-module github.com/gostack/cookies
+module github.com/doximity/cookies
 
 go 1.22.6
 
