@@ -1,0 +1,6 @@
+github.com/divoxx/goRailsYourself v0.0.0-20150818201947-3fe8d02f099f h1:jx31MCT3aPNLMLEYbaEg5fauKAtBmyb8iM48QxTmE98=
+github.com/divoxx/goRailsYourself v0.0.0-20150818201947-3fe8d02f099f/go.mod h1:D2BDDdHBTYnRHaA+Eo6SqJnkkyk+AfTI2Qb49UveB4E=
+github.com/franela/goblin v0.0.0-20211003143422-0a4f594942bf h1:NrF81UtW8gG2LBGkXFQFqlfNnvMt9WdB46sfdJY4oqc=
+github.com/franela/goblin v0.0.0-20211003143422-0a4f594942bf/go.mod h1:VzmDKDJVZI3aJmnRI9VjAn9nJ8qPPsN1fqzr9dqInIo=
+golang.org/x/crypto v0.27.0 h1:GXm2NjJrPaiv/h1tb2UH8QfgC/hOf/+z0p6PT8o1w7A=
+golang.org/x/crypto v0.27.0/go.mod h1:1Xngt8kV6Dvbssa53Ziq6Eqn0HqbZi5Z6R0ZpwQzt70=

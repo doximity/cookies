@@ -96,6 +96,8 @@ type CookieOptions struct {
 	HTTPOnly bool
 	Secure   bool
 	MaxAge   time.Duration
+	Expires  time.Time
+	SameSite http.SameSite
 }
 
 // Set a cookie with the data set to the encrypted version of the serialization of v.
@@ -114,6 +116,8 @@ func (cm *SecureCookieManager) Set(w http.ResponseWriter, name string, opts *Coo
 		HttpOnly: opts.HTTPOnly,
 		Secure:   opts.Secure,
 		MaxAge:   int(opts.MaxAge.Seconds()),
+		Expires:  opts.Expires,
+		SameSite: opts.SameSite,
 	}
 
 	if err := cm.Encoder.Encode(v, &cookie); err != nil {
