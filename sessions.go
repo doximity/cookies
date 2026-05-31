@@ -28,8 +28,11 @@ func NewCookieSessionManager(cm *SecureCookieManager, name string, opts *CookieO
 
 // Current fetches the current session from the request cookie, starting one if it doesn't exist.
 func (sm *CookieSessionManager) Current(req *http.Request, sess Session) error {
-	_, err := sm.cm.Get(req, sm.name, sess)
-	return err
+	if _, err := sm.cm.Get(req, sm.name, sess); err != nil {
+		return err
+	}
+
+	return sess.Validate(req)
 }
 
 // Update updates the session with the given struct, replacing the existing session data with it.
