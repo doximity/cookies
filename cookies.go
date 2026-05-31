@@ -2,10 +2,19 @@ package cookies
 
 import (
 	"encoding/json"
+	"errors"
+	"fmt"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/divoxx/goRailsYourself/crypto"
+)
+
+const (
+	minimumCookieSecretLength      = 32
+	minimumKeyDerivationIterations = 1000
+	defaultKeyDerivationIterations = minimumKeyDerivationIterations
 )
 
 // CookieEncryptor implements cookie encryption and signing to allow securely storing sensitive
@@ -15,8 +24,24 @@ type CookieEncryptor struct {
 }
 
 // NewCookieEncryptor creates a new instance of CookieEncryptor. Creating this instance is expensive
-// since it has to derives the keys.
+// since it has to derive the keys. It panics when the secret or iteration count is unsafe.
 func NewCookieEncryptor(secret string, iterations int) *CookieEncryptor {
+	ce, err := NewCookieEncryptorWithError(secret, iterations)
+	if err != nil {
+		panic(err)
+	}
+
+	return ce
+}
+
+// NewCookieEncryptorWithError creates a new instance of CookieEncryptor and returns validation errors.
+func NewCookieEncryptorWithError(secret string, iterations int) (*CookieEncryptor, error) {
+	if err := validateCookieEncryptorConfig(secret, iterations); err != nil {
+		return nil, err
+	}
+
+	iterations = normalizeKeyDerivationIterations(iterations)
+
 	var (
 		kg      = crypto.KeyGenerator{Secret: secret, Iterations: iterations}
 		key     = kg.CacheGenerate([]byte("encrypted cookie"), 32)
@@ -27,7 +52,35 @@ func NewCookieEncryptor(secret string, iterations int) *CookieEncryptor {
 		messageEncryptor: crypto.MessageEncryptor{Key: key, SignKey: signKey, Serializer: crypto.NullMsgSerializer{}},
 	}
 
-	return ce
+	return ce, nil
+}
+
+func validateCookieEncryptorConfig(secret string, iterations int) error {
+	if strings.TrimSpace(secret) == "" {
+		return errors.New("cookies: secret is missing or blank")
+	}
+
+	if len(secret) < minimumCookieSecretLength {
+		return fmt.Errorf("cookies: secret must be at least %d bytes", minimumCookieSecretLength)
+	}
+
+	if iterations < 0 {
+		return errors.New("cookies: iterations must be zero for the default or at least the minimum")
+	}
+
+	if iterations > 0 && iterations < minimumKeyDerivationIterations {
+		return fmt.Errorf("cookies: iterations must be zero for the default or at least %d", minimumKeyDerivationIterations)
+	}
+
+	return nil
+}
+
+func normalizeKeyDerivationIterations(iterations int) int {
+	if iterations == 0 {
+		return defaultKeyDerivationIterations
+	}
+
+	return iterations
 }
 
 // Encrypt takes an http.Cookie instance and encrypts and sign it's value, replacing it.
