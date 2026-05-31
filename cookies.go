@@ -105,19 +105,17 @@ type CookieOptions struct {
 func (cm *SecureCookieManager) Set(w http.ResponseWriter, name string, opts *CookieOptions, v interface{}) (*http.Cookie, error) {
 	var err error
 
-	if opts == nil {
-		opts = &CookieOptions{}
-	}
+	cookieOpts := defaultCookieOptions(opts)
 
 	cookie := http.Cookie{
 		Name:     name,
-		Domain:   opts.Domain,
-		Path:     opts.Path,
-		HttpOnly: opts.HTTPOnly,
-		Secure:   opts.Secure,
-		MaxAge:   int(opts.MaxAge.Seconds()),
-		Expires:  opts.Expires,
-		SameSite: opts.SameSite,
+		Domain:   cookieOpts.Domain,
+		Path:     cookieOpts.Path,
+		HttpOnly: cookieOpts.HTTPOnly,
+		Secure:   cookieOpts.Secure,
+		MaxAge:   int(cookieOpts.MaxAge.Seconds()),
+		Expires:  cookieOpts.Expires,
+		SameSite: cookieOpts.SameSite,
 	}
 
 	if err := cm.Encoder.Encode(v, &cookie); err != nil {
@@ -153,19 +151,43 @@ func (cm *SecureCookieManager) Get(req *http.Request, name string, v interface{}
 
 // Deletes the Cookie, setting value to empty and expiring in the past.
 func (cm *SecureCookieManager) Delete(w http.ResponseWriter, name string, opts *CookieOptions) (*http.Cookie, error) {
-	if opts == nil {
-		opts = &CookieOptions{}
-	}
+	cookieOpts := defaultCookieOptions(opts)
 
 	cookie := http.Cookie{
 		Name:     name,
-		HttpOnly: opts.HTTPOnly,
-		Domain:   opts.Domain,
-		Secure:   opts.Secure,
-		Path:     opts.Path,
+		HttpOnly: cookieOpts.HTTPOnly,
+		Domain:   cookieOpts.Domain,
+		Secure:   cookieOpts.Secure,
+		Path:     cookieOpts.Path,
 		MaxAge:   -1,
+		SameSite: cookieOpts.SameSite,
 	}
 
 	http.SetCookie(w, &cookie)
 	return &cookie, nil
+}
+
+func defaultCookieOptions(opts *CookieOptions) CookieOptions {
+	defaults := CookieOptions{
+		Path:     "/",
+		HTTPOnly: true,
+		Secure:   true,
+		SameSite: http.SameSiteLaxMode,
+	}
+
+	if opts == nil {
+		return defaults
+	}
+
+	defaults.Domain = opts.Domain
+	if opts.Path != "" {
+		defaults.Path = opts.Path
+	}
+	defaults.MaxAge = opts.MaxAge
+	defaults.Expires = opts.Expires
+	if opts.SameSite != 0 {
+		defaults.SameSite = opts.SameSite
+	}
+
+	return defaults
 }
